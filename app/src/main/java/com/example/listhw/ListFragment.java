@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListFragment extends Fragment {
+    public static final String NUMCOUNT = "Numcount";
     private ArrayList<String> mNumbers;
     private int mDataCount;
     private RecyclerView mRecyclerView;
@@ -35,7 +36,7 @@ public class ListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mNumbers = new ArrayList<>();
         mDataCount = (savedInstanceState == null) ? 50 :
-                savedInstanceState.getInt("Numcount", 50);
+                savedInstanceState.getInt(NUMCOUNT, 50);
         fillList();
     }
 
@@ -44,7 +45,17 @@ public class ListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment, container, false);
         mRecyclerView = view.findViewById(R.id.numbers_list);
+
         mAddButton = view.findViewById(R.id.add_number);
+        mAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNumbers.add((mNumbers.size() + 1) + "");
+                mRecyclerView.getAdapter().notifyItemInserted(mNumbers.size());
+                mCountContainer.setText(String.valueOf(++mDataCount));
+            }
+        });
+
         mCountContainer = view.findViewById(R.id.num_count);
         return view;
     }
@@ -65,21 +76,12 @@ public class ListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        mAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mNumbers.add((mNumbers.size() + 1) + "");
-                mRecyclerView.getAdapter().notifyItemInserted(mNumbers.size());
-                mCountContainer.setText(String.valueOf(++mDataCount));
-            }
-        });
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("Numcount", mNumbers.size());
+        outState.putInt(NUMCOUNT, mNumbers.size());
     }
 
 
